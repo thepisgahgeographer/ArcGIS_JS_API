@@ -107,7 +107,7 @@
                 query.units = "feet";
                 query.spatialRelationship = "intersects";
 
-                queryTask.execute(query).then(function(results) {;
+                queryTask.execute(query).then(function(results) {
                     console.log(results.features);
                     console.log(results.geometryType);
                     console.log(results.spatialReference);

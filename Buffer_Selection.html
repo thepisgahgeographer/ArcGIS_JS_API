@@ -83,7 +83,7 @@
             view.on("click", function(evt) {
 
                 var ptBuff =
-                    geometryEngine.buffer(evt.mapPoint, 1000, "feet");
+                    geometryEngine.buffer(evt.mapPoint, 2000, "feet");
 
                 view.graphics.add(new Graphic({
                     geometry: evt.mapPoint,
@@ -103,7 +103,7 @@
 
                 var query = new Query();
                 query.geometry = evt.mapPoint;
-                query.distance = 1000;
+                query.distance = ptBuff.distance;
                 query.units = "feet";
                 query.spatialRelationship = "intersects";
 
@@ -114,6 +114,20 @@
 
 
                 });
+
+                view.whenLayerView(Pisgah).then(function(lyrView) {
+                    var queryPisgah = Pisgah.createQuery();
+                    Pisgah.queryFeatures(queryPisgah);
+                    var feature = result.features[0];
+                    highlightSelect = lyrView.highlight(feature.attributes["OBJECTID"]);
+
+                });
+
+
+
+
+
+
             });
         });
     </script>

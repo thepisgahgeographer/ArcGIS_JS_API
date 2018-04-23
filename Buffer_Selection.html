@@ -114,21 +114,24 @@
 
 
                 });
+            });
+            var polylineSymbol = {
+                type: "simple-line",
+                color: [226, 119, 40],
+                width: 4
+            };
 
-                view.whenLayerView(Pisgah).then(function(lyrView) {
-                    var queryPisgah = Pisgah.createQuery();
-                    Pisgah.queryFeatures(queryPisgah);
-                    var feature = result.features[0];
-                    highlightSelect = lyrView.highlight(feature.attributes["OBJECTID"]);
-
-                });
-
-
-
-
-
+            var Graph = new Graphic({
+                geometry: polyline,
+                symbol: polylineSymbol,
 
             });
+
+
+
+
+
+
         });
     </script>
 </head>

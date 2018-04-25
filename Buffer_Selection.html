@@ -107,27 +107,38 @@
                 query.units = "feet";
                 query.spatialRelationship = "intersects";
 
+
+                /*This queryTask returns a feature set and those properties can be logged/passed on*/
                 queryTask.execute(query).then(function(results) {;
+                    var feat = results.features;
+
+                    /*For some Reason this keeps returning as an object and not Array*/
+                    console.log(typeof(feat));
+
                     console.log(results.features);
                     console.log(results.geometryType);
                     console.log(results.spatialReference);
+                    feat.forEach(function(element) {
+                        console.log(element.displayFieldName);
 
+
+                    });
 
                 });
+
+                var polylineSymbol = {
+                    type: "simple-line",
+                    color: [226, 119, 40],
+                    width: 4
+                };
+
+                var Graph = new Graphic({
+                    geometry: polyline,
+                    symbol: polylineSymbol,
+
+                });
+
             });
-            var polylineSymbol = {
-                type: "simple-line",
-                color: [226, 119, 40],
-                width: 4
-            };
-
-            var Graph = new Graphic({
-                geometry: polyline,
-                symbol: polylineSymbol,
-
-            });
-
-
 
 
 

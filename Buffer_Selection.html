@@ -30,9 +30,12 @@
             "esri/geometry/geometryEngine",
             "esri/tasks/QueryTask",
             "esri/tasks/support/Query",
+            "esri/layers/GraphicsLayer",
             "dojo/domReady!"
-        ], function(Map, MapView, FeatureLayer, Graphic, geometryEngine, QueryTask, Query) {
+        ], function(Map, MapView, FeatureLayer, Graphic, geometryEngine, QueryTask, Query, GraphicsLayer) {
 
+
+            var buffDistance = 2000;
 
             // Create a Map
             var map = new Map({
@@ -80,10 +83,23 @@
             };
 
 
+            var gLayer = new GraphicsLayer();
+            map.add(gLayer);
+
+
+            var polylineSymbol = {
+                type: "simple-line",
+                color: [0, 255, 255],
+                width: 4
+            };
+
+
+
+
             view.on("click", function(evt) {
 
                 var ptBuff =
-                    geometryEngine.buffer(evt.mapPoint, 2000, "feet");
+                    geometryEngine.buffer(evt.mapPoint, buffDistance, "feet");
 
                 view.graphics.add(new Graphic({
                     geometry: evt.mapPoint,
@@ -103,40 +119,43 @@
 
                 var query = new Query();
                 query.geometry = evt.mapPoint;
-                query.distance = ptBuff.distance;
+                query.distance = buffDistance;
+                //console.log(query.distance);
                 query.units = "feet";
                 query.spatialRelationship = "intersects";
+                query.outFields = ["*"];
+
+                var newGraphicArray = [];
 
 
                 /*This queryTask returns a feature set and those properties can be logged/passed on*/
                 queryTask.execute(query).then(function(results) {;
                     var feat = results.features;
 
-                    /*For some Reason this keeps returning as an object and not Array*/
-                    console.log(typeof(feat));
-
-                    console.log(results.features);
-                    console.log(results.geometryType);
-                    console.log(results.spatialReference);
                     feat.forEach(function(element) {
-                        console.log(element.displayFieldName);
+                        console.log(element);
 
+                        //Construct new graphic using element geometry
+
+                        //newGraphiArray.push(Graphic)
 
                     });
 
-                });
+                    //making sure elements are added
+                    console.log("newGrpahicArray", newGraphicArray);
 
-                var polylineSymbol = {
-                    type: "simple-line",
-                    color: [226, 119, 40],
-                    width: 4
-                };
-
-                var Graph = new Graphic({
-                    geometry: polyline,
-                    symbol: polylineSymbol,
+                    gLayer.addMany(newGraphicArray);
 
                 });
+
+
+                /*
+
+                                var Graph = new Graphic({
+                                    geometry: polyline,
+                                    symbol: polylineSymbol,
+
+                                });*/
 
             });
 

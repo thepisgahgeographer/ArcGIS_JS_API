@@ -90,7 +90,7 @@
             var polylineSymbol = {
                 type: "simple-line",
                 color: [0, 255, 255],
-                width: 4
+                width: 10
             };
 
 
@@ -135,9 +135,13 @@
                     feat.forEach(function(element) {
                         console.log(element);
 
-                        //Construct new graphic using element geometry
+                        var Graph = new Graphic({
+                            geometry: ptBuff,
+                            symbol: polylineSymbol
 
-                        //newGraphiArray.push(Graphic)
+                        });
+
+                        newGraphicArray.push(Graph)
 
                     });
 
@@ -149,13 +153,7 @@
                 });
 
 
-                /*
 
-                                var Graph = new Graphic({
-                                    geometry: polyline,
-                                    symbol: polylineSymbol,
-
-                                });*/
 
             });
 

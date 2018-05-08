@@ -25,6 +25,7 @@
         require([
             "esri/Map",
             "esri/views/MapView",
+            "esri/geometry/Circle",
             "esri/layers/FeatureLayer",
             "esri/Graphic",
             "esri/geometry/geometryEngine",
@@ -32,10 +33,18 @@
             "esri/tasks/support/Query",
             "esri/layers/GraphicsLayer",
             "dojo/domReady!"
-        ], function(Map, MapView, FeatureLayer, Graphic, geometryEngine, QueryTask, Query, GraphicsLayer) {
+        ], function(Map, MapView, Circle, FeatureLayer, Graphic, geometryEngine, QueryTask, Query, GraphicsLayer) {
 
 
-            var buffDistance = 2000;
+            var buffDistance = 500;
+
+
+
+
+
+
+
+
 
             // Create a Map
             var map = new Map({
@@ -97,20 +106,23 @@
 
 
             view.on("click", function(evt) {
+                var circle = new Circle({
+                    center: evt.mapPoint,
+                    radius: buffDistance
+                });
 
-                var ptBuff =
-                    geometryEngine.buffer(evt.mapPoint, buffDistance, "feet");
+
+                //var ptBuff =
+                //  geometryEngine.buffer(evt.mapPoint, buffDistance, "feet");
+
+                view.graphics.removeAll();
 
                 view.graphics.add(new Graphic({
-                    geometry: evt.mapPoint,
-                    symbol: pointSymbol
-                }));
-
-
-                view.graphics.add(new Graphic({
-                    geometry: ptBuff,
+                    geometry: circle,
                     symbol: markerSymbol
                 }));
+
+
 
 
                 var queryTask = new QueryTask({
@@ -120,6 +132,7 @@
                 var query = new Query();
                 query.geometry = evt.mapPoint;
                 query.distance = buffDistance;
+                query.outSpatialReference = Pisgah.spatialReference;
                 //console.log(query.distance);
                 query.units = "feet";
                 query.spatialRelationship = "intersects";
@@ -129,37 +142,33 @@
 
 
                 /*This queryTask returns a feature set and those properties can be logged/passed on*/
-                queryTask.execute(query).then(function(results) {;
-                    var feat = results.features;
 
-                    feat.forEach(function(element) {
-                        console.log(element);
+                Pisgah.queryFeatures(query).then(function(results) {
+                    console.log(results.features)
 
-                        var Graph = new Graphic({
-                            geometry: ptBuff,
+                    //loop through the Array
+                    var resultsFeatureSet = results.features;
+                    resultsFeatureSet.forEach(function(element) {
+                        var poly = new Graphic({
+                            geometry: element,
                             symbol: polylineSymbol
-
                         });
 
-                        newGraphicArray.push(Graph)
-
+                        view.graphics.add(poly);
                     });
 
-                    //making sure elements are added
-                    console.log("newGrpahicArray", newGraphicArray);
 
-                    gLayer.addMany(newGraphicArray);
+
+
+
+
+
+
+
+
 
                 });
-
-
-
-
             });
-
-
-
-
         });
     </script>
 </head>

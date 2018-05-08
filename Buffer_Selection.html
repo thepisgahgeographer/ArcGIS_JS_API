@@ -39,13 +39,6 @@
             var buffDistance = 500;
 
 
-
-
-
-
-
-
-
             // Create a Map
             var map = new Map({
                 basemap: "topo",
@@ -143,14 +136,14 @@
 
                 /*This queryTask returns a feature set and those properties can be logged/passed on*/
 
-                Pisgah.queryFeatures(query).then(function(results) {
-                    console.log(results.features)
+                queryTask.execute(query).then(function(results) {
+                    console.log(results.features);
 
                     //loop through the Array
                     var resultsFeatureSet = results.features;
                     resultsFeatureSet.forEach(function(element) {
                         var poly = new Graphic({
-                            geometry: element,
+                            geometry: query.geometry,
                             symbol: polylineSymbol
                         });
 

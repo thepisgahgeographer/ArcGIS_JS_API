@@ -43,6 +43,17 @@ require([
             content: "Stream Name" + "  " + ":" + " " + "{Displ_Name}"
         };
 
+        let UniqueValRen   = {
+            type: "unique-value",
+            field: "Displ_Name",
+            defaultSymbol:{type: "simple-fill"},
+            uniqueValueInfos:[{
+                 
+            }]
+
+        };
+
+
         let FL = new FeatureLayer({
             url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/SM_Trout_Streams/FeatureServer/0", 
             popupTemplate: template

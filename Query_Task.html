@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="utf-8">
+
+
+<title>Query Task</title>
+<link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+<script src="https://js.arcgis.com/4.10/"></script>
+<style>
+    html, body, #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+</style>
+<script>
+require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/tasks/support/Query",
+      "esri/tasks/QueryTask",
+      "esri/Graphic",
+      "dojo/domReady!"],
+      function(Map, MapView, Query, QueryTask, Graphic){
+
+        let map = new Map({
+            basemap: "topo-vector"
+        });
+
+        let view = new MapView({
+            container: "viewDiv",
+            map: map,
+            center: [-81.635, 35.600],
+            zoom:15
+        });
+
+        let query = new Query();
+        query.where = "Displ_Name = 'Jacob Fork'";
+        query.returnGeometry = true;
+
+        let queryTask = new QueryTask({
+            url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/SM_Trout_Streams/FeatureServer/0" 
+        });
+
+        //Ensure that the query and query task work correctly by logging to the console
+        queryTask.execute(query).then(function(result){
+            //console.log(result.features.length)
+            result.features.forEach(function(item){
+                let graph = new Graphic({
+                    geometry: item.geometry,
+                    attributes: item.attributes,
+                    symbol: {
+                        type: "simple-line",
+                        color: [27, 74, 150],
+                        width: 3
+                    }    
+                });
+                
+                view.graphics.add(graph);
+
+            });
+
+            
+
+        });
+        
+    });
+</script>
+
+
+
+</head>
+
+<body>
+
+<div id="viewDiv">
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+
+
+
+
+
+</html>
+

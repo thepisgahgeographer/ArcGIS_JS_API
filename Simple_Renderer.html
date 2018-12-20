@@ -46,8 +46,16 @@ require([
         let UniqueValRen   = {
             type: "unique-value",
             field: "Displ_Name",
-            defaultSymbol:{type: "simple-fill"},
+            defaultSymbol:{type: "simple-line",
+                color: "blue"
+        },
             uniqueValueInfos:[{
+                "value":"Jacob Fork",
+                "symbol":{
+                    "color": [27, 74, 150],
+                    "width": 2.5,
+                    "type": "simple-line"
+                }
                  
             }]
 
@@ -56,7 +64,8 @@ require([
 
         let FL = new FeatureLayer({
             url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/SM_Trout_Streams/FeatureServer/0", 
-            popupTemplate: template
+            popupTemplate: template,
+            renderer: UniqueValRen
         });
         map.add(FL);
 

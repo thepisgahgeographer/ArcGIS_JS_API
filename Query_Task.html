@@ -38,7 +38,7 @@ require([
         });
 
         let query = new Query();
-        query.where = "Displ_Name = 'Jacob Fork'";
+        query.where = "Displ_Name = 'Nettle Branch' OR Displ_Name= 'Jacob Fork' AND Shape_Leng > 5000";
         query.returnGeometry = true;
 
         let queryTask = new QueryTask({

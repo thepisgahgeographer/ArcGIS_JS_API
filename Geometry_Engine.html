@@ -34,11 +34,11 @@ require([
             container: "viewDiv",
             map: map,
             center: [-81.486, 35.906],
-            zoom:15
+            zoom:13
         });
 
         let hibPoint;
-        let bufferGraphic;
+        
 
         view.when(()=>{
             hibPoint = new Point({
@@ -47,26 +47,36 @@ require([
                 spatialReference: view.spatialReference
             });
         });
-        
-        view.on("pointer-move", (event)=>{
-            let point = view.toMap(event);
-            let buffer = geometryEngine.buffer(point, 10, "miles");
+  
+        let bufferGraphic;
+    
+    view.on("pointer-move", (event)=>{
+        let point = view.toMap(event);
+        let buff = geometryEngine.buffer(point, 1, "miles");
 
             view.graphics.remove(bufferGraphic);
             bufferGraphic = new Graphic({
-                geometry: buffer,
+                geometry: buff,
                     symbol: {
                         type: "simple-fill",
                         color: "rgba(0,0,0,.15)",
                         outline: {
                                 color: "green",
                                 width: 2 
-                                 }
+                        }
                     }
+                    
         });
         view.graphics.add(bufferGraphic);
+        });
         
-        
+        view.on("drag", ()=>{
+            event.stopPropagation();
+        });
+
+        view.on("pointer-leave", ()=>{
+            view.graphics.removeAll();
+        });
 
 
       });

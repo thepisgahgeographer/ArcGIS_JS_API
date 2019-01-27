@@ -1,0 +1,85 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>The HTML5 Sample</title>
+  <meta name="description" content="">
+  <meta name="YP" content="Web_GIS_Data">
+
+  
+  <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.10/"></script>
+
+  <style> html, body, #mapid {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;}
+  </style>
+
+
+  <script>
+  require([
+  "esri/Map",
+  "esri/views/SceneView",
+  "esri/layers/FeatureLayer",
+  "esri/renderers/SimpleRenderer"
+], function(Map, SceneView, FeatureLayer, SimpleRenderer){
+
+let map = new Map({
+basemap: "topo-vector",
+ground:"world-elevation"
+});
+
+let scene = new SceneView({
+map: map,
+container: "mapid",
+center: [-81.4895, 35.9071],
+zoom:13
+});
+
+
+let rend = {
+type: "simple",
+symbol:{
+    type: "simple-marker",
+    size: 15,
+    color: "red"
+    }
+};
+
+let template = {
+            title: "Brushy Points",
+            content: "{z}"
+        };
+
+let layer1 = new FeatureLayer({
+    url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/Brushy_Points_Z_1/FeatureServer/0",
+    renderer: rend,
+    popupTemplate: template
+});
+
+
+map.add(layer1);
+
+  });
+
+
+
+  
+  
+  </script>
+<style></style>
+
+</head>
+
+<body>
+ <!-- <script src="js/scripts.js"></script>-->
+
+<div id="mapid">
+
+</div>
+
+
+</body>
+</html>

@@ -23,11 +23,12 @@
   "esri/Map",
   "esri/views/SceneView",
   "esri/layers/FeatureLayer",
+  "esri/layers/PointCloudLayer",
   "esri/renderers/SimpleRenderer"
-], function(Map, SceneView, FeatureLayer, SimpleRenderer){
+], function(Map, SceneView, FeatureLayer, PointCloudLayer, SimpleRenderer){
 
 let map = new Map({
-basemap: "topo-vector",
+basemap: "satellite",
 ground:"world-elevation"
 });
 
@@ -53,14 +54,19 @@ let template = {
             content: "{z}"
         };
 
-let layer1 = new FeatureLayer({
-    url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/Brushy_Points_Z_1/FeatureServer/0",
-    renderer: rend,
-    popupTemplate: template
+let slayer = new PointCloudLayer({
+  url: "https://tiles.arcgis.com/tiles/IJcGtArxG8IPalnE/arcgis/rest/services/Wilsons/SceneServer",
+  mode: "absolute-height"
 });
 
+//let layer1 = new FeatureLayer({
+//    url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/Brushy_Points_Z_1/FeatureServer/0",
+//    renderer: rend,
+//    popupTemplate: template
+//});
 
-map.add(layer1);
+
+map.add(slayer);
 
   });
 

@@ -56,7 +56,14 @@ let template = {
 
 let slayer = new PointCloudLayer({
   url: "https://tiles.arcgis.com/tiles/IJcGtArxG8IPalnE/arcgis/rest/services/Wilsons/SceneServer",
-  mode: "absolute-height"
+  mode: "absolute-height",
+  filters:[{
+    type: "value",
+    field: "CLASS_CODE",
+    mode: "include",
+    values: [1]
+
+}]
 });
 
 //let layer1 = new FeatureLayer({

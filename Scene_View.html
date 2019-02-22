@@ -64,9 +64,11 @@ let slayer = new PointCloudLayer({
     values: [1]
 
 }]
+
+
 });
 
-let pcloud = new PointCloudLayer({});
+//let pcloud = new PointCloudLayer({});
 
 //let layer1 = new FeatureLayer({
 //    url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/Brushy_Points_Z_1/FeatureServer/0",
@@ -77,6 +79,9 @@ let pcloud = new PointCloudLayer({});
 
 map.add(slayer);
 
+slayer.when(function(){
+  view.extent = layer.fullExtent;
+    });
   });
 
 

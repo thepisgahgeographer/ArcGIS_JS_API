@@ -14,7 +14,27 @@
     padding: 0;
     margin: 0;
     height: 100%;
-    width: 100%;}
+    width: 100%;
+    }
+
+    #selector{
+      width: 300px;
+      height:200px;
+      position: absolute;
+      top: 700px;
+      left: 30px;
+      background-color:ivory ;
+      border-radius: 10px;
+    }
+
+    #selector h2{
+      text-align: center;
+    }
+
+    #selector p{
+      padding-left: 15px;
+    }
+
   </style>
 
 
@@ -99,6 +119,15 @@ slayer.when(function(){
 <div id="mapid">
 
 </div>
+
+<div id="Selector">
+
+<h2>Point Selection</h2>
+<p><input type="radio" name="filter" value="tree"> Trees</p>
+<p><input type="radio" name="filter" value="building"> Buildings</p>
+<p><input type="radio" name="filter" value="urban"> Urban</p>
+</div>
+
 
 
 </body>

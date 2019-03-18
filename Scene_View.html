@@ -55,8 +55,8 @@ ground:"world-elevation"
 let scene = new SceneView({
 map: map,
 container: "mapid",
-center: [-81.4895, 35.9071],
-zoom:13
+center: [-81.78, 36.04],
+zoom:15
 });
 
 
@@ -95,6 +95,28 @@ let slayer = new PointCloudLayer({
 //    renderer: rend,
 //    popupTemplate: template
 //});
+
+// view.when(function() {
+//         const pcLayer = webscene.layers.getItemAt(0);
+
+//         const radios = document.getElementsByName("filter");
+//         // Handle change events on radio buttons to switch to the correct renderer
+//         for (var i = 0; i < radios.length; i++) {
+//           radios[i].addEventListener("change", function(event) {
+//             var fieldName = event.target.value;
+//             switch (fieldName) {
+//               case "First_Return":
+//                 pcLayer.filters = vegetationFilter;
+//                 break;
+//               case "Last_Return":
+//                 pcLayer.filters = buildingsFilter;
+//                 break;
+//               default:
+//                 pcLayer.filters = [];
+//             }
+//           });
+//         }
+
 
 
 map.add(slayer);

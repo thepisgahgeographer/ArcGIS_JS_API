@@ -9,7 +9,7 @@ let Bike = {
     }
 };
 
-const Hibriten = (height)=>{
+let Hibriten = (height)=>{
     this.height = height;
 }
 

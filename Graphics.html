@@ -30,11 +30,16 @@
     </style>
 
     <script>
-      require(["esri/Map", "esri/views/MapView", "esri/Graphic"], function(
+      require(["esri/Map", "esri/views/MapView", "esri/popup/content/TextContent","esri/PopupTemplate", "esri/Graphic"], 
+      function(
         Map,
         MapView,
+        TextContent,
+        PopupTemplate,
         Graphic
-      ) {
+      ) 
+      
+      {
         var map = new Map({
           basemap: "hybrid"
         });
@@ -79,30 +84,49 @@
          * This allows users to view the graphic's
          * attributes when it is clicked.
          ******************************************/
+        // var polylineGraphic = new Graphic({
+        //   geometry: polyline,
+        //   symbol: lineSymbol,
+        //   attributes: lineAtt,
+        //   popupTemplate: {
+        //     // autocasts as new PopupTemplate()
+        //     title: "{Name}",
+        //     content: [
+        //       {
+        //         type: "fields",
+        //         fieldInfos: [
+        //           {
+        //             fieldName: "Name"
+        //           },
+        //           {
+        //             fieldName: "Owner"
+        //           },
+        //           {
+        //             fieldName: "Length"
+        //           }
+        //         ]
+        //       }
+        //     ]
+        //   }
+        // });
+
+        let contents = new TextContent({
+          text: "<p> Ridgline Trail<br> Hibriten Mtn   </p>"
+
+        });
+
+
+        let template = new PopupTemplate({
+            title: "Trail",
+            content:[contents]
+
+        });
+
         var polylineGraphic = new Graphic({
           geometry: polyline,
           symbol: lineSymbol,
           attributes: lineAtt,
-          popupTemplate: {
-            // autocasts as new PopupTemplate()
-            title: "{Name}",
-            content: [
-              {
-                type: "fields",
-                fieldInfos: [
-                  {
-                    fieldName: "Name"
-                  },
-                  {
-                    fieldName: "Owner"
-                  },
-                  {
-                    fieldName: "Length"
-                  }
-                ]
-              }
-            ]
-          }
+          popupTemplate: template
         });
 
 

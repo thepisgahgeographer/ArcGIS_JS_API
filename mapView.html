@@ -27,9 +27,8 @@
             "esri/views/MapView",
             "esri/layers/FeatureLayer",
             "esri/geometry/Polyline",
-            "esri/Graphic",
-            
-        ], function(Map, MapView, FeatureLayer, Polyline, Graphic) {
+            "esri/Graphic"
+        ], function (Map, MapView, FeatureLayer, Polyline, Graphic) {
 
 
             // Create a Map
@@ -42,29 +41,32 @@
             var view = new MapView({
                 container: "mapPort",
                 map: map,
-                zoom: 10,
+                zoom: 13,
                 center: [-81.7333, 35.9940] // longitude, latitude
             });
 
+            console.log(view.get("zoom"));
+            console.log(map.get("basemap.title"));
 
             // Construct a variable to store the popup information
-            var info;
-            info = {
-                title: "Pisgah Trails",
-                content: "{Trail_Name}" + "</br>" + "{TRAIL_TYPE}" + "</br>" + "You da man Brian"
+            
+            let info = {
+                title: "Trout Waters",
+                content: "{WRC_CLASS}" + "</br>" + "{Displ_Name}" + "<br>" + "{Shape__Length}"
             };
 
             // Construct a new FeatureLayer Variable to be added to the map & pase the popupTemplate property the info variable
             var Pisgah = new FeatureLayer({
-                url: "http://services7.arcgis.com/F4iYwOOvXLYhkPXF/arcgis/rest/services/USFS_Nantahala_Pisgah_Trails_updated/FeatureServer/2",
-                popupTemplate: info
+                url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/streams/FeatureServer",
+                popupTemplate: info,
+                definitionExpression: "Shape__Length > 2000"
             });
 
             // let paths = [
             //     [81.490, 35.906],
             //     [81.485, 35.908]  
             //     ];  
-            
+
             // let line = new Polyline({
             //     paths: paths,
             //     spatialReference: {wkid: 4326}
@@ -84,9 +86,12 @@
 
 
             map.add(Pisgah);
-            
+
             map.add();
             view.graphics.add(polylineGraphic);
+
+
+
         });
     </script>
 </head>
@@ -95,4 +100,4 @@
     <div id="mapPort"></div>
 </body>
 
-</html>l
+</html>

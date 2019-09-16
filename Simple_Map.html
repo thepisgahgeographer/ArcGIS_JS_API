@@ -1,43 +1,52 @@
 <!DOCTYPE html>
 
 <html>
+
 <head>
-<meta charset="utf-8">
+  <meta charset="utf-8">
 
 
-<title>Simple Map</title>
-<link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
-<script src="https://js.arcgis.com/4.10/"></script>
-<style>
-    html, body, #viewDiv {
+  <title>Simple Map</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.10/"></script>
+  <style>
+    html,
+    body,
+    #viewDiv {
       padding: 0;
       margin: 0;
       height: 100%;
       width: 100%;
     }
   </style>
-<script>
-require([
+  <script>
+    require([
       "esri/Map",
       "esri/views/MapView",
       "dojo/domReady!"],
-      function(Map, MapView){
-          
-          let map = new Map({
-              basemap: "topo-vector"
-          });
+      function (Map, MapView) {
+
+        let map = new Map({
+          basemap: "topo-vector"
+        });
 
         let view = new MapView({
-            container: "viewDiv",
-            map: map,
-            center: [-81.486, 35.906],
-            zoom:15
+          container: "viewDiv",
+          map: map,
+          center: [-81.486, 35.906],
+          zoom: 15
         });
+
+       
+
+        console.log(view.get("zoom"));
+        console.log(map.get("basemap.title"));
+
 
       });
 
 
-</script>
+  </script>
 
 
 
@@ -45,9 +54,9 @@ require([
 
 <body>
 
-<div id="viewDiv">
+  <div id="viewDiv">
 
-</div>
+  </div>
 
 
 
@@ -67,4 +76,3 @@ require([
 
 
 </html>
-

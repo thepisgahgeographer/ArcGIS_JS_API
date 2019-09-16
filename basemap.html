@@ -36,6 +36,11 @@
         zoom: 13
       });
       
+      let toggle = new BasemapToggle({
+        view: view,
+        nextBasemap: "satellite"
+      });
+
     var basemapGallery = new BasemapGallery({
       view: view
     });
@@ -48,6 +53,8 @@
     view.ui.add(basemapGallery, {
      position: "bottom-right"
     });
+
+    view.ui.add(toggle, "bottom-left");
     
     view.ui.add(searching, "top-left");
 

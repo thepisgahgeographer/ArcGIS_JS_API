@@ -28,7 +28,7 @@
             "esri/layers/FeatureLayer",
             "esri/geometry/Polyline",
             "esri/Graphic",
-            "dojo/domReady!"
+            
         ], function(Map, MapView, FeatureLayer, Polyline, Graphic) {
 
 
@@ -60,27 +60,27 @@
                 popupTemplate: info
             });
 
-            let paths = [
-                [81.490, 35.906],
-                [81.485, 35.908]  
-                ];  
+            // let paths = [
+            //     [81.490, 35.906],
+            //     [81.485, 35.908]  
+            //     ];  
             
-            let line = new Polyline({
-                paths: paths,
-                spatialReference: {wkid: 4326}
-            });
+            // let line = new Polyline({
+            //     paths: paths,
+            //     spatialReference: {wkid: 4326}
+            // });
 
 
-            let lineSymbol = {
-                type: "simple-line",
-                color: [226, 119, 40],
-                width:4
-            };
+            // let lineSymbol = {
+            //     type: "simple-line",
+            //     color: [226, 119, 40],
+            //     width:4
+            // };
 
-            let polylineGraphic = new Graphic({
-                geometry: line,
-                symbol: lineSymbol
-            });
+            // let polylineGraphic = new Graphic({
+            //     geometry: line,
+            //     symbol: lineSymbol
+            // });
 
 
             map.add(Pisgah);

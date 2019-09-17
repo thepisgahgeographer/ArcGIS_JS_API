@@ -46,11 +46,6 @@
                 });
                 map.add(layer);
 
-                // view.on("click", function (event) {
-                //     // event is the event handle returned after the event fires.
-                //     console.log(event.mapPoint);
-                // });
-
                 let task = new QueryTask({
                     url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/SM_Trout_Streams/FeatureServer/0"
                 });
@@ -59,21 +54,23 @@
                 query.where = "Displ_Name = 'Shinny Creek'";
                 query.outFields = ["Displ_Name"];
 
-                task.executeForCount(query).then(function(count){
+                task.executeForCount(query).then(function (count) {
                     console.log(count);
                 });
 
-                task.executeForExtent(query).then(function(extent){
+                task.executeForExtent(query).then(function (extent) {
                     console.log(extent)
                 });
 
-                layer.queryFeatures(query).then(function (results) {
-                    console.log(results.features);
+                layer.queryFeatures(query).then(function (features) {
+                    console.log(features.geometryType);
+                    console.log(features.fields);
+                    console.log(features.spatialReference);
                     return features;
                 });
 
-                
-               
+
+
 
 
 
@@ -88,7 +85,7 @@
 
 <body>
 
-    
+
     <div id="viewDiv">
 
     </div>

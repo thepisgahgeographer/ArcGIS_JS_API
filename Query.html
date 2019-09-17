@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+
+    <title>Query Task</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.10/"></script>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/layers/FeatureLayer",
+            "esri/tasks/QueryTask",
+            "esri/tasks/support/Query"
+
+        ],
+            function (Map, MapView, FeatureLayer, QueryTask, Query) {
+
+                let map = new Map({
+                    basemap: "topo-vector"
+                });
+
+                let view = new MapView({
+                    container: "viewDiv",
+                    map: map,
+                    center: [-81.4590967, 35.913510],
+                    zoom: 14
+                });
+
+                let layer = new FeatureLayer({
+                    url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/Brushy_Points_Z/FeatureServer"
+                });
+                map.add(layer);
+
+                // view.on("click", function (event) {
+                //     // event is the event handle returned after the event fires.
+                //     console.log(event.mapPoint);
+                // });
+
+                let task = new QueryTask({
+                    url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/Brushy_Points_Z/FeatureServer"
+                });
+
+                let query = {
+                    where: "Z > 1000",
+                    returnGeometry: "true"
+                };
+
+                task.execute(query);
+                console.log(query.features);
+
+
+            });
+
+
+    </script>
+
+
+
+</head>
+
+<body>
+
+
+    <div id="viewDiv">
+    </div>
+
+
+
+</body>
+
+</html>

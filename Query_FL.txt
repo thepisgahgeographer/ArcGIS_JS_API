@@ -1,0 +1,187 @@
+<html>
+<head>
+  <meta name="description" content="ArcGIS JavaScript Tutorials: Query a feature layer">
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>ArcGIS JavaScript Tutorials: Query a feature layer</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.12/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.12/"></script>
+</head>
+
+<script>
+  require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/FeatureLayer",
+      "esri/layers/GraphicsLayer",
+      "esri/Graphic"
+    ],
+    function(
+      Map, MapView, FeatureLayer, GraphicsLayer, Graphic
+    ) {
+
+      var map = new Map({
+        basemap: "topo-vector"
+      });
+    
+      var view = new MapView({
+        container: "viewDiv",
+        map: map,
+        center: [-118.80543,34.02700],
+        zoom: 13
+      });
+      
+      //*** CHALLENGE ***//
+      var sql = "TRL_NAME like '%Canyone%'";
+
+      view.when(function(){
+        //*** ADD ***//
+        // queryFeatureLayer(view.center, 1500, "intersects")
+        queryFeatureLayerView(view.center, 1500, "intersects")
+        
+        //*** CHALLENGE ***//
+        //queryFeatureLayer(view.center, 1500, "intersects", sql)
+        //queryFeatureLayerView(view.center, 1500, "intersects", sql)
+      });
+
+      view.on("click", function(event){
+        //*** ADD ***//
+        queryFeatureLayer(event.mapPoint, 1500, "intersects")
+        //queryFeatureLayerView(event.mapPoint, 1500, "intersects");
+        
+        //*** CHALLENGE ***//
+        // queryFeatureLayer(event.mapPoint, 1500, "intersects", sql)
+        queryFeatureLayerView(event.mapPoint, 1500, "intersects", sql)
+      });
+
+    
+      // Reference the feature layer to query
+ 
+      var featureLayer = new FeatureLayer({
+        url: "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trailheads_Styled/FeatureServer/0",
+      });
+    
+     // Add a graphics layer to hold features and draw data
+    
+      var graphicsLayer = new GraphicsLayer();
+      map.add(graphicsLayer);
+    
+      function addGraphics(result) {
+        graphicsLayer.removeAll();
+        result.features.forEach(function(feature){
+          var g = new Graphic({
+            geometry: feature.geometry,
+            attributes: feature.attributes,
+            symbol: {
+             type: "simple-marker",
+              color: [0,0,0],
+              outline: {
+               width: 2,
+               color: [0,255,255],
+             },
+              size: "20px"
+            },
+            popupTemplate: {
+             title: "{TRL_NAME}",
+             content: "This a {PARK_NAME} trail located in {CITY_JUR}."
+            }
+          });
+          graphicsLayer.add(g);
+        });
+      }
+    
+      // Server-side query
+    
+      function queryFeatureLayer(point, distance, spatialRelationship, sqlExpression) {
+        var query = {
+          geometry: point,
+          distance: distance,
+          spatialRelationship: spatialRelationship,
+          outFields: ["*"],
+          returnGeometry: true,
+          where: sqlExpression
+        };
+        featureLayer.queryFeatures(query).then(function(result) {
+          addGraphics(result);
+        });
+      }  
+        
+      // Client-side query
+    
+      function queryFeatureLayerView(point, distance, spatialRelationship, sqlExpression){ 
+        if (!map.findLayerById(featureLayer.id)) {
+          featureLayer.outFields = ["*"];
+          map.add(featureLayer,0);
+        }
+        var query = {
+          geometry: point,
+          distance: distance,
+          spatialRelationship: spatialRelationship,
+          outFields: ["*"],
+          returnGeometry: true,
+          where: sqlExpression
+        };
+        // Wait for the layerview to be ready and then query features
+        view.whenLayerView(featureLayer).then(function(featureLayerView) {
+          if (featureLayerView.updating) {
+            var handle = featureLayerView.watch("updating", function(isUpdating){
+              if (!isUpdating) {
+                featureLayerView.queryFeatures(query).then(function(result) {
+                  addGraphics(result) 
+                });
+                handle.remove();
+              }
+            });            
+          } else {
+            featureLayerView.queryFeatures(query).then(function(result) {
+              addGraphics(result);
+            });
+          }
+        });
+      } 
+    
+      // CHALLENGE: Find a feature and show pop-ups (client-side)
+    
+      // view.when(function(){
+      //   view.whenLayerView(featureLayer).then(function(featureLayerView) {
+      //     view.on("pointer-move", function(event){
+      //       view.hitTest(event).then(function(response){
+      //         // Only return features for the feature layer
+      //         var feature = response.results.filter(function (result) {
+      //          return result.graphic.layer === featureLayer;
+      //         })[0].graphic;
+      //         if (feature) {
+      //           // Show popup for new features only
+      //           if (!view.popup.features.length || view.popup.features.length && (view.popup.features[0].attributes.FID !== feature.attributes.FID)) {
+      //             view.popup.open({
+      //               title: feature.attributes.TRL_NAME,
+      //               content: "This a " + feature.attributes.PARK_NAME + " trail located in " + feature.attributes.CITY_JUR + ".",
+      //               location: feature.geometry
+      //             });
+      //           }
+      //         }
+      //       });
+      //     });
+      //   });        
+      // });
+
+    });
+    
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+</body>
+
+</html>

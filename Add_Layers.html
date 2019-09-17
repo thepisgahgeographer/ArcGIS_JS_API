@@ -1,55 +1,71 @@
 <!DOCTYPE html>
 
 <html>
+
 <head>
-<meta charset="utf-8">
+  <meta charset="utf-8">
 
 
-<title>Add Layers</title>
-<link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
-<script src="https://js.arcgis.com/4.10/"></script>
-<style>
-    html, body, #viewDiv {
+  <title>Add Layers</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.10/"></script>
+  <style>
+    html,
+    body,
+    #viewDiv {
       padding: 0;
       margin: 0;
       height: 100%;
       width: 100%;
     }
   </style>
-<script>
-require([
+  <script>
+    require([
       "esri/Map",
       "esri/views/MapView",
       "esri/layers/FeatureLayer",
-      "dojo/domReady!"],
-      function(Map, MapView, FeatureLayer){
+    ],
+      function (Map, MapView, FeatureLayer) {
 
         let map = new Map({
-            basemap: "topo-vector"
+          basemap: "topo-vector"
         });
 
         let view = new MapView({
-            container: "viewDiv",
-            map: map,
-            center: [-81.635, 35.600],
-            zoom:15
+          container: "viewDiv",
+          map: map,
+          center: [-81.635, 35.600],
+          zoom: 15
         });
 
+        let render = {
+          type: "simple",
+          symbol: {
+            type: "simple-line",
+            width: "2px"
+          }
+        }
+
+
         let template = {
-            title: "Trout Streams",
-            content: "Stream Name" + "  " + ":" + " " + "{Displ_Name}"
+          title: "Trout Streams",
+          content: "Stream Name" + "  " + ":" + " " + "{Displ_Name}" + "<br>" + "{Shape_Leng}"
         };
 
         let FL = new FeatureLayer({
-            url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/SM_Trout_Streams/FeatureServer/0", 
-            popupTemplate: template
+          url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/SM_Trout_Streams/FeatureServer/0",
+          popupTemplate: template,
+          renderer: render,
+          definitionExpression: "Shape_Leng > 10000"
         });
+
+
         map.add(FL);
 
       });
 
 
-</script>
+  </script>
 
 
 
@@ -57,26 +73,11 @@ require([
 
 <body>
 
-<div id="viewDiv">
+  <div id="viewDiv">
 
-</div>
-
-
-
-
-
-
-
-
-
-
+  </div>
 
 
 </body>
 
-
-
-
-
 </html>
-

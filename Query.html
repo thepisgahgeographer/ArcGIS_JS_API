@@ -37,12 +37,12 @@
                 let view = new MapView({
                     container: "viewDiv",
                     map: map,
-                    center: [-81.4590967, 35.913510],
-                    zoom: 14
+                    center: [-81.635, 35.600],
+                    zoom: 15
                 });
 
                 let layer = new FeatureLayer({
-                    url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/Brushy_Points_Z/FeatureServer"
+                    url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/SM_Trout_Streams/FeatureServer/0"
                 });
                 map.add(layer);
 
@@ -52,16 +52,29 @@
                 // });
 
                 let task = new QueryTask({
-                    url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/Brushy_Points_Z/FeatureServer"
+                    url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/SM_Trout_Streams/FeatureServer/0"
                 });
 
-                let query = {
-                    where: "Z > 1000",
-                    returnGeometry: "true"
-                };
+                let query = new Query();
+                query.where = "Displ_Name = 'Shinny Creek'";
+                query.outFields = ["Displ_Name"];
 
-                task.execute(query);
-                console.log(query.features);
+                task.executeForCount(query).then(function(count){
+                    console.log(count);
+                });
+
+                task.executeForExtent(query).then(function(extent){
+                    console.log(extent)
+                });
+
+                layer.queryFeatures(query).then(function (results) {
+                    console.log(results.features);
+                    return features;
+                });
+
+                
+               
+
 
 
             });
@@ -75,10 +88,10 @@
 
 <body>
 
-
+    
     <div id="viewDiv">
-    </div>
 
+    </div>
 
 
 </body>

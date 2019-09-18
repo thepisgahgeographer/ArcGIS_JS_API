@@ -24,9 +24,11 @@
             "esri/Map",
             "esri/views/MapView",
             "esri/layers/FeatureLayer",
-            "esri/tasks/support/Query"
+            
+            "esri/Graphic",
+            "esri/layers/GraphicsLayer"
         ],
-            function (Map, MapView, FeatureLayer, Query) {
+            function (Map, MapView, FeatureLayer, Graphic, GraphicsLayer) {
 
                 let map = new Map({
                     basemap: "topo-vector"
@@ -50,6 +52,52 @@
                 });
 
                 map.add(layer);
+
+                let Point = {
+                    type: "point",
+                    latitude: 35.59816,
+                    longitude: -81.63156
+                };
+
+                let graphic = new Graphic({
+                    geometry: Point,
+                    symbol: {
+                        type: "simple-marker",
+                        color: "red",
+                        size: 10
+                    }
+                });
+
+                let graphics = new GraphicsLayer({
+                    graphics: [graphic]
+                });
+
+                map.add(graphics);
+
+                // let buffer = geometryEngine.buffer(Point, 1000, "feet");
+
+
+
+                // view.on("click", function (event) {
+                //     var graphic = new Graphic({
+                //         geometry: buffer,
+                //         symbol: {
+                //             type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                //             color: "blue",
+                //             size: 1,
+                //             outline: { // autocasts as new SimpleLineSymbol()
+                //                 width: 0.5,
+                //                 color: "darkblue"
+                // //             }
+                // //         }
+                // //     });
+
+                //     let graphicLayer = new GraphicsLayer({
+                //         graphics: [graphic]
+                //     });
+
+                //     map.add(graphicLayer);
+                // });
 
 
 

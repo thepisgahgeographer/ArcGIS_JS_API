@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+
+    <title>Add Layers</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.10/"></script>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/layers/ImageryLayer",
+            "esri/layers/support/PixelBlock"
+        ],
+            function (Map, MapView, ImageryLayer, PixelBlock) {
+
+                let map = new Map({
+                    basemap: "topo-vector"
+                });
+
+                let view = new MapView({
+                    container: "viewDiv",
+                    map: map,
+                    center: [-81.635, 35.600],
+                    zoom: 10
+                });
+
+                template = {
+                    title: "South Mountains Landsat",
+                    content: "{raster.imageMaxHeight}"
+                };
+
+                let raster = new ImageryLayer({
+                    url: "https://landsat2.arcgis.com/arcgis/rest/services/Landsat/MS/ImageServer",
+                    popupTemplate: template
+                });
+
+                raster.maxScale = 10000;
+
+                map.add(raster);
+
+
+                // let pixelBlock = new PixelBlock();
+
+                // let pixels = raster.pixelData.pixelBlock.pixels;
+                // // Prints the number of bands in the layer
+                // console.log(pixels.length);
+
+                console.log(raster.fullExtent);
+                console.log(raster.format);
+                console.log(raster.spatialReference);
+
+
+            });
+
+    </script>
+
+
+
+</head>
+
+<body>
+
+    <div id="viewDiv">
+
+    </div>
+
+
+</body>
+
+</html>

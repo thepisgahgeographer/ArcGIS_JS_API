@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+
+    <title>Add Layers</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.10/"></script>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/portal/Portal",
+            "esri/portal/PortalQueryParams",
+            "esri/portal/PortalUser"
+        ],
+            function (Map, MapView, Portal, PortalQueryParams, PortalUser) {
+
+                let map = new Map({
+                    basemap: "topo-vector"
+                });
+
+                let view = new MapView({
+                    container: "viewDiv",
+                    map: map,
+                    center: [-81.635, 35.600],
+                    zoom: 10
+                });
+
+                template = {
+                    title: "South Mountains Landsat",
+                    content: "{raster.imageMaxHeight}"
+                };
+
+                let portal = new Portal({
+                    url: "https://thepisgahgeo.maps.arcgis.com"
+                });
+
+                let user = new PortalUser({
+                });
+
+
+                console.log(portal.url);
+                console.log(portal.authMode);
+            });
+
+
+
+
+    </script>
+
+
+
+</head>
+
+<body>
+
+    <div id="viewDiv">
+
+    </div>
+
+
+</body>
+
+</html>

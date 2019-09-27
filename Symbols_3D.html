@@ -1,0 +1,116 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>The HTML5 Sample</title>
+    <meta name="description" content="">
+    <meta name="YP" content="Web_GIS_Data">
+
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.10/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.10/"></script>
+
+    <style>
+        html,
+        body,
+        #mapid {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #selector {
+            width: 300px;
+            height: 200px;
+            position: absolute;
+            top: 700px;
+            left: 30px;
+            background-color: ivory;
+            border-radius: 10px;
+        }
+
+        #selector h2 {
+            text-align: center;
+        }
+
+        #selector p {
+            padding-left: 15px;
+        }
+    </style>
+
+
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/SceneView",
+            "esri/layers/FeatureLayer",
+            "esri/layers/PointCloudLayer",
+            "esri/renderers/SimpleRenderer"
+        ], function (Map, SceneView, FeatureLayer, PointCloudLayer, SimpleRenderer) {
+
+            let map = new Map({
+                basemap: "satellite",
+                ground: "world-elevation"
+            });
+
+            let scene = new SceneView({
+                map: map,
+                container: "mapid",
+                center: [-81.78, 36.04],
+                zoom: 15
+            });
+
+            // create a PathSymbol3DLayer with a strip style
+            var stripPath = {
+                type: "line-3d",  // autocasts as new LineSymbol3D()
+                symbolLayers: [{
+                    type: "path",  // autocasts as new PathSymbol3DLayer()
+                    profile: "quad",  // creates a rectangular shape
+                    width: 20,  // path width in meters
+                    height: 5,  // path height in meters
+                    material: { color: "#ff7380" },
+                    cap: "square",
+                    profileRotation: "heading"
+                }]
+            };
+
+            // create a PathSymbol3DLayer with a pipe style
+            var pipePath = {
+                type: "line-3d",  // autocasts as new LineSymbol3D()
+                symbolLayers: [{
+                    type: "path",  // autocasts as new PathSymbol3DLayer()
+                    profile: "circle",  // creates a rectangular shape
+                    width: 20,  // path width will also set the height to the same value
+                    material: { color: "#ff7380" },
+                    cap: "round"
+                }]
+            };
+
+            var symbol = {
+                type: "mesh-3d",  // autocasts as new MeshSymbol3D()
+                symbolLayers: [{
+                    type: "fill",  // autocasts as new FillSymbol3DLayer()
+                    material: { color: "green" }
+                }]
+            };
+            sceneLayer.renderer = {
+                type: "simple",  // autocasts as new SimpleRenderer()
+                symbol: symbol
+            };
+
+
+    </script>
+    <style></style>
+
+</head>
+
+<body>
+
+
+
+
+</body>
+
+</html>

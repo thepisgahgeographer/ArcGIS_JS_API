@@ -49,17 +49,29 @@
             console.log(map.get("basemap.title"));
 
             // Construct a variable to store the popup information
-            
+
             let info = {
                 title: "Trout Waters",
                 content: "{WRC_CLASS}" + "</br>" + "{Displ_Name}" + "<br>" + "{Shape__Length}"
             };
 
+            let symbol = {
+                type: "line-3d",  // autocasts as new LineSymbol3D()
+                symbolLayers: [{
+                    type: "path",  // autocasts as new PathSymbol3DLayer()
+                    profile: "circle",
+                    width: 10,    // width of the tube in meters
+                    material: { color: [128, 128, 128] }
+                }]
+            };
+
+
             // Construct a new FeatureLayer Variable to be added to the map & pase the popupTemplate property the info variable
             var Pisgah = new FeatureLayer({
                 url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/streams/FeatureServer",
                 popupTemplate: info,
-                definitionExpression: "Shape__Length > 2000"
+                definitionExpression: "Shape__Length > 2000",
+                symbol: symbol
             });
 
             // let paths = [
@@ -84,6 +96,7 @@
             //     symbol: lineSymbol
             // });
 
+            
 
             map.add(Pisgah);
 

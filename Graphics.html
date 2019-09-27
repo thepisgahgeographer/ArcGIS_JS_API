@@ -1,45 +1,38 @@
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="initial-scale=1,maximum-scale=1,user-scalable=no"
-    />
-    <!--
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <!--
   ArcGIS API for JavaScript, https://js.arcgis.com
   For more information about the intro-graphics sample, read the original sample description at developers.arcgis.com.
   https://developers.arcgis.com/javascript/latest/sample-code/intro-graphics/index.html
   -->
-<title>Intro to graphics - 4.12</title>
+  <title>Intro to graphics - 4.12</title>
 
-    <link
-      rel="stylesheet"
-      href="https://js.arcgis.com/4.12/esri/themes/light/main.css"
-    />
-    <script src="https://js.arcgis.com/4.12/"></script>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.12/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.12/"></script>
 
-    <style>
-      html,
-      body,
-      #viewDiv {
-        padding: 0;
-        margin: 0;
-        height: 100%;
-        width: 100%;
-      }
-    </style>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
 
-    <script>
-      require(["esri/Map", "esri/views/MapView", "esri/popup/content/TextContent","esri/PopupTemplate", "esri/Graphic"], 
-      function(
+  <script>
+    require(["esri/Map", "esri/views/MapView", "esri/popup/content/TextContent", "esri/PopupTemplate", "esri/Graphic"],
+      function (
         Map,
         MapView,
         TextContent,
         PopupTemplate,
         Graphic
-      ) 
-      
-      {
+      ) {
         var map = new Map({
           basemap: "hybrid"
         });
@@ -61,6 +54,16 @@
         var polyline = {
           type: "polyline", // autocasts as new Polyline()
           paths: [[-81.490, 35.906], [-81.485, 35.908], [-81.483, 35.904], [-81.487, 35.901], [-81.494, 35.899], [-81.490, 35.906]]
+        };
+
+        let symbol = {
+          type: "line-3d",  // autocasts as new LineSymbol3D()
+          symbolLayers: [{
+            type: "path",  // autocasts as new PathSymbol3DLayer()
+            profile: "circle",
+            width: 10,    // width of the tube in meters
+            material: { color: [128, 128, 128] }
+          }]
         };
 
         // Create a symbol for drawing the line
@@ -117,8 +120,8 @@
 
 
         let template = new PopupTemplate({
-            title: "Trail",
-            content:[contents]
+          title: "Trail",
+          content: [contents]
 
         });
 
@@ -133,10 +136,11 @@
         // Add the graphics to the view's graphics layer
         view.graphics.add(polylineGraphic);
       });
-    </script>
-  </head>
+  </script>
+</head>
 
-  <body>
-    <div id="viewDiv"></div>
-  </body>
+<body>
+  <div id="viewDiv"></div>
+</body>
+
 </html>

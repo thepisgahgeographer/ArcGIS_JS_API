@@ -24,8 +24,10 @@
       "esri/Map",
       "esri/views/MapView",
       "esri/layers/FeatureLayer",
+      "esri/widgets/LayerList",
+      "esri/widgets/Print"
     ],
-      function (Map, MapView, FeatureLayer) {
+      function (Map, MapView, FeatureLayer, LayerList, Print) {
 
         let map = new Map({
           basemap: "topo-vector"
@@ -62,6 +64,31 @@
 
         map.add(FL);
 
+        var layerList = new LayerList({
+          view: view
+        });
+        // Adds widget below other elements in the top left corner of the view
+        view.ui.add(layerList, {
+          position: "top-left"
+        });
+
+        let print = new Print({
+          view: view
+        });
+
+        view.ui.add(print, {
+          position: "bottom-left"
+        });
+
+        let func = () => {
+          view.goTo({
+            center: [-80.7926833, 35.0456397],
+            zoom: 15
+          });
+        }
+
+        document.getElementById("test").addEventListener("click", func);
+
       });
 
 
@@ -74,7 +101,7 @@
 <body>
 
   <div id="viewDiv">
-
+    <button id="test" style="position: absolute; left: 650px; top: 800px; width:150px; height:50px;">Click Me</button>
   </div>
 
 

@@ -91,14 +91,19 @@
 
         document.getElementById("test").addEventListener("click", func);
 
-        view.on("click", (event) => {
+        let events = view.on("click", (event) => {
           // console.log(event.mapPoint);
           // console.log(event.screenPoint);
-          document.getElementById("test2").innerHTML(event.mapPoint);
+          let capture = event.mapPoint
+          // document.write(capture.latitude + capture.longitude);
 
         });
 
-        
+        setTimeout(() => {
+          window.alert("Hello");
+        }, 10000);
+
+
       });
 
 
@@ -112,8 +117,9 @@
 
   <div id="viewDiv">
     <button id="test" style="position: absolute; left: 650px; top: 800px; width:150px; height:50px;">Click Me</button>
+    <p id="test2" style="position: absolute; left: 550px; top: 800px; width:150px; height:50px;">Hello</p>
   </div>
-  <div id="test2">
+  <div>
 
 
   </div>

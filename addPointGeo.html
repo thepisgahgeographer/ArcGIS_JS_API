@@ -47,14 +47,14 @@
 
 
             // Construct a variable to store the popup information
-            var info;
+            let info;
             info = {
                 title: "Pisgah Trails",
                 content: "{Trail_Name}" + "</br>" + "{TRAIL_TYPE}" + "</br>" + "{SEG_LENGTH}"
             };
 
             // Construct a new FeatureLayer Variable to be added to the map & pase the popupTemplate property the info variable
-            var Pisgah = new FeatureLayer({
+            let Pisgah = new FeatureLayer({
                 url: "http://services7.arcgis.com/F4iYwOOvXLYhkPXF/arcgis/rest/services/USFS_Nantahala_Pisgah_Trails_updated/FeatureServer/2",
                 popupTemplate: info
             });

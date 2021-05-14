@@ -1,0 +1,75 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>ArcGIS Developer Guide: Display a map (2D)</title>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.19/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.19/"></script>
+
+    <script>
+        require([
+            "esri/config",
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/layers/FeatureLayer"
+        ], function (esriConfig, Map, MapView, FeatureLayer) {
+
+            const lay = new FeatureLayer({
+                url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/ArcGIS/rest/services/Brushy_Points_Z/FeatureServer/0"
+            });
+
+
+            esriConfig.apiKey = "";
+            const map = new Map({
+                basemap: "arcgis-topographic",
+                layers: lay
+            });
+
+            const view = new MapView({
+                map: map,
+                center: [-81.48, 35.906],
+                zoom: 13, // scale: 72223.819286
+                container: "viewDiv",
+                constraints: {
+                    snapToZoom: false
+                }
+            });
+
+            view.popup.autoOpenEnabled = false;
+            view.on("click", (event) => {
+                // Get the coordinates of the click on the view
+                // around the decimals to 3 decimals
+                const lat = Math.round(event.mapPoint.latitude * 1000) / 1000;
+                const lon = Math.round(event.mapPoint.longitude * 1000) / 1000;
+
+                view.popup.open({
+                    // Set the popup's title to the coordinates of the clicked location
+                    title: "Latitude / Longitude: [" + lat + ", " + lon + "]",
+                    location: event.mapPoint // Set the location of the popup to the clicked location
+                });
+            });
+
+
+
+        });
+
+    </script>
+</head>
+
+<body>
+    <div id="viewDiv"></div>
+</body>
+
+</html>

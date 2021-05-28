@@ -37,7 +37,7 @@
             Editor
         ) => {
 
-            let lineLayer, polygonLayer;
+            let pointLayer, lineLayer, polygonLayer;
 
             // Create a map from the referenced webmap item id
             const webmap = new WebMap({
@@ -61,6 +61,9 @@
                                     break;
                                 case "polyline":
                                     lineLayer = layer;
+                                    break;
+                                case "point":
+                                    pointLayer = layer;
                                     break;
 
                             }
@@ -94,6 +97,19 @@
                         }]
                     };
 
+                    const pointInfos = {
+                        layer: pointLayer,
+                        fieldConfig: [{
+                            name: "Asset_Type",
+                            label: "Asset Type"
+                        }, {
+                            name: "Primary_Category",
+                            label: "Primary Category"
+
+                        }]
+                    };
+
+
 
                     const editor = new Editor({
                         view: view,
@@ -104,6 +120,10 @@
                         {
                             layer: polygonLayer,
                             fieldConfig: [polyInfos]
+                        },
+                        {
+                            layer: pointLayer,
+                            fieldConfig: [pointInfos]
                         }
                         ], snappingOptions: {
                             enabled: true,
@@ -114,6 +134,8 @@
                                 layer: lineLayer
                             }, {
                                 layer: polygonLayer
+                            }, {
+                                layer: pointLayer
                             }]
                         }
 

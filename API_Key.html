@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>ArcGIS Developer Guide: Display a map (2D)</title>
+    <title>Brushy Mountains</title>
     <style>
         html,
         body,
@@ -31,7 +31,7 @@
             });
 
 
-            esriConfig.apiKey = "";
+            esriConfig.apiKey = "AAPKc660988af3d0466789e64b333c5b35ccIPWjOBovrOZ0bz6tEgaGagXH7gcdG6hQ8qnv7G-kwtct2i9cXpL3saSGQD1V3GSK";
             const map = new Map({
                 basemap: "arcgis-topographic",
                 layers: lay
@@ -53,6 +53,7 @@
                 // around the decimals to 3 decimals
                 const lat = Math.round(event.mapPoint.latitude * 1000) / 1000;
                 const lon = Math.round(event.mapPoint.longitude * 1000) / 1000;
+                console.log(event.mapPoint.latitude)
 
                 view.popup.open({
                     // Set the popup's title to the coordinates of the clicked location

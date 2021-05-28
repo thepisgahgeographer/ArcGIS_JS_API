@@ -1,0 +1,170 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Edit features with the Editor widget | Sample | ArcGIS API for JavaScript 4.19</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.19/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.19/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    .esri-editor .esri-item-list__scroller {
+      max-height: 350px;
+    }
+  </style>
+
+  <script>
+    require([
+        "esri/WebMap",
+        "esri/views/MapView",
+        "esri/widgets/Editor"
+      ], (
+        WebMap, MapView,
+        Editor
+      ) => {
+
+        let pointLayer, lineLayer, polygonLayer;
+
+        // Create a map from the referenced webmap item id
+        const webmap = new WebMap({
+          portalItem: {
+            id: "459a495fc16d4d4caa35e92e895694c8"
+          }
+        });
+
+        const view = new MapView({
+          container: "viewDiv",
+          map: webmap
+        });
+
+        view.when(() => {
+          view.map.loadAll().then(() => {
+            view.map.allLayers.forEach((layer) => {
+              if (layer.type === 'feature') {
+                switch (layer.geometryType) {
+                  case "polygon":
+                    polygonLayer = layer;
+                    break;
+                  case "polyline":
+                    lineLayer = layer;
+                    break;
+                  case "point":
+                    pointLayer = layer;
+                    break;
+                }
+              }
+            });
+
+            // Create layerInfos for layers in Editor. This
+            // sets the fields for editing.
+
+            const pointInfos = {
+              layer: pointLayer,
+              fieldConfig: [{
+                name: "HazardType",
+                label: "Hazard type"
+              }, {
+                name: "Description",
+                label: "Description"
+              }, {
+                name: "SpecialInstructions",
+                label: "Special Instructions"
+              }, {
+                name: "Status",
+                label: "Status"
+              }, {
+                name: "Priority",
+                label: "Priority"
+              }]
+            };
+
+            const lineInfos = {
+              layer: lineLayer,
+              fieldConfig: [{
+                name: "Severity",
+                label: "Severity"
+              }, {
+                name: "blocktype",
+                label: "Type of blockage"
+              }, {
+                name: "fullclose",
+                label: "Full closure"
+              }, {
+                name: "active",
+                label: "Active"
+              }, {
+                name: "locdesc",
+                label: "Location Description"
+              }]
+            };
+
+            const polyInfos = {
+              layer: polygonLayer,
+              fieldConfig: [{
+                name: "incidenttype",
+                label: "Incident Type"
+              }, {
+                name: "activeincid",
+                label: "Active"
+              }, {
+                name: "descrip",
+                label: "Description"
+              }]
+            };
+
+            const editor = new Editor({
+              view: view,
+              layerInfos: [{
+                  layer: pointLayer,
+                  fieldConfig: [pointInfos]
+                },
+                {
+                  layer: lineLayer,
+                  fieldConfig: [lineInfos]
+                },
+                {
+                  layer: polygonLayer,
+                  fieldConfig: [polyInfos]
+                }
+              ],
+              // Set the snapping options for the Editor. By default, snapping is enabled. This can be toggled on/off using the CTRL key.
+              snappingOptions: {
+                enabled: true,
+                selfEnabled: true,
+                featureEnabled: true,
+                featureSources: [{
+                  layer: pointLayer
+                }, {
+                  layer: lineLayer
+                }, {
+                  layer: polygonLayer
+                }]
+              }
+
+            });
+            // Add widget to top-right of the view
+            view.ui.add(editor, "top-right");
+
+          });
+
+        });
+      });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="editorDiv"></div>
+</body>
+
+</html>

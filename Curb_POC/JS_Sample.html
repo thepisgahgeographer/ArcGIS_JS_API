@@ -1,0 +1,138 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Edit features with the Editor widget | Sample | ArcGIS API for JavaScript 4.19</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.19/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.19/"></script>
+
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        .esri-editor .esri-item-list__scroller {
+            max-height: 350px;
+        }
+
+        #formDiv {
+            width: 100%;
+        }
+    </style>
+
+    <script>
+        require([
+            "esri/WebMap",
+            "esri/views/MapView",
+            "esri/widgets/Editor"
+        ], (
+            WebMap, MapView,
+            Editor
+        ) => {
+
+            let lineLayer, polygonLayer;
+
+            // Create a map from the referenced webmap item id
+            const webmap = new WebMap({
+                portalItem: {
+                    id: "8f02c6ff05dd45b69fe94331016e4b52"
+                }
+            });
+
+            const view = new MapView({
+                container: "viewDiv",
+                map: webmap
+            });
+
+            view.when(() => {
+                view.map.loadAll().then(() => {
+                    view.map.allLayers.forEach((layer) => {
+                        if (layer.type === 'feature') {
+                            switch (layer.geometryType) {
+                                case "polygon":
+                                    polygonLayer = layer;
+                                    break;
+                                case "polyline":
+                                    lineLayer = layer;
+                                    break;
+
+                            }
+                        }
+                    });
+
+                    // Create layerInfos for layers in Editor. This
+                    // sets the fields for editing.
+
+                    const lineInfos = {
+                        layer: lineLayer,
+                        fieldConfig: [{
+                            name: "Properties",
+                            label: "Properties"
+                        }, {
+                            name: "Regulations",
+                            label: "Regulated Usage"
+                        }]
+                    };
+
+
+                    const polyInfos = {
+                        layer: polygonLayer,
+                        fieldConfig: [{
+                            name: "Type",
+                            label: "Type"
+                        }, {
+                            name: "Plan_Name",
+                            label: "Plan Name"
+
+                        }]
+                    };
+
+
+                    const editor = new Editor({
+                        view: view,
+                        layerInfos: [{
+                            layer: lineLayer,
+                            fieldConfig: [lineInfos]
+                        },
+                        {
+                            layer: polygonLayer,
+                            fieldConfig: [polyInfos]
+                        }
+                        ], snappingOptions: {
+                            enabled: true,
+                            selfEnabled: true,
+                            featureEnabled: true,
+                            featureSources: [{
+
+                                layer: lineLayer
+                            }, {
+                                layer: polygonLayer
+                            }]
+                        }
+
+                    });
+
+                    view.ui.add(editor, "top-right");
+
+                });
+
+            });
+        });
+    </script>
+</head>
+
+<body>
+
+    </div>
+    <div id="viewDiv"></div>
+    <div id="editorDiv"></div>
+</body>
+
+</html>

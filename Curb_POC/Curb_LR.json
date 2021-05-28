@@ -1,0 +1,12 @@
+{
+    "type": "Feature",
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [-112.1258855,33.4513431],
+        [-112.1253007,33.4513208]
+      ],
+      "properties": {
+      }
+    }
+  }

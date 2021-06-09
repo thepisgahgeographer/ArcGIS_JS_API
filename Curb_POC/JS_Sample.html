@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Edit features with the Editor widget | Sample | ArcGIS API for JavaScript 4.19</title>
+    <title>Curb POC</title>
 
     <link rel="stylesheet" href="https://js.arcgis.com/4.19/esri/themes/light/main.css" />
     <script src="https://js.arcgis.com/4.19/"></script>
@@ -76,12 +76,25 @@
                     const lineInfos = {
                         layer: lineLayer,
                         fieldConfig: [{
-                            name: "Properties",
-                            label: "Properties"
+                            name: "Asset_Type",
+                            label: "Asset Type"
                         }, {
-                            name: "Regulations",
-                            label: "Regulated Usage"
-                        }]
+                            name: "Rule",
+                            label: "Rule"
+                        },
+                        {
+                            name:"Payment_Method",
+                            label:"Payment Method"
+                        },
+                        {
+                            name: "Payment_Form",
+                            label:"Form of Payment"
+                        },
+                        {   name:"Days_of_Week",
+                        label:"Days of Week"
+
+                        }
+                    ]
                     };
 
 

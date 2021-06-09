@@ -1,0 +1,57 @@
+object		{3}
+	manifest		{7}
+createdDate	:	2019-12-30T11:40:45Z
+lastUpdatedDate	:	2020-07-30T17:40:45Z
+	priorityHierarchy		[11]
+0	:	no standing
+1	:	construction
+2	:	temporary restriction
+3	:	restricted standing
+4	:	standing
+5	:	no parking
+6	:	restricted loading
+7	:	loading
+8	:	restricted parking
+9	:	paid parking
+10	:	free parking
+curblrVersion	:	1.1.0
+timeZone	:	America/Los_Angeles
+currency	:	USD
+	authority		{2}
+name	:	Portland Bureau of Transportation
+url	:	https://www.portlandoregon.gov/transportation/
+type	:	FeatureCollection
+	features		[416]
+	0		{3}
+type	:	Feature
+	properties		{2}
+	location		{6}
+shstRefId	:	36860eafa27b8af9b448d46d971f9d63
+sideOfStreet	:	right
+shstLocationStart	:	4.9
+shstLocationEnd	:	73
+assetType	:	fence
+baysAngle	:	parallel
+	regulations		[1]
+	0		{4}
+	rule		{2}
+activity	:	no standing
+priorityCategory	:	construction
+	userClasses		[1]
+	0		{0}
+(empty object)
+	timeSpans		[0]
+(empty array)
+	payment		{1}
+	rates		[1]
+	0		{0}
+(empty object)
+	geometry		{2}
+type	:	LineString
+	coordinates		[2]
+	0		[2]
+0	:	-122.68043744294195
+1	:	45.52104443209546
+	1		[2]
+0	:	-122.6807510226922
+1	:	45.5204726658138

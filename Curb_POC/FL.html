@@ -1,0 +1,111 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Intro to FeatureLayer | Sample | ArcGIS API for JavaScript 4.19</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.19/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.19/"></script>
+
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+
+    <script>
+        require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer", "esri/geometry/Polyline", "esri/Graphic",
+            "esri/layers/GraphicsLayer"], function (Map, MapView, FeatureLayer, Polyline, Graphic, GraphicsLayer) {
+                let map = new Map({
+                    basemap: "topo"
+                });
+
+                let view = new MapView({
+                    container: "viewDiv",
+                    map: map,
+                    center: [-81.4894, 35.9069],
+                    zoom: 18
+                });
+
+                /********************
+                 * Add feature layer
+                 ********************/
+                const Template = {
+                    title: "M Value"
+                };
+
+                let featureLayer = new FeatureLayer({
+                    url: "https://services7.arcgis.com/33Tmvrm3G2UZLFK9/arcgis/rest/services/Hibriten/FeatureServer/0",
+                    popupTemplate: Template
+                });
+
+                map.add(featureLayer);
+
+                view.on("click", function (event) {
+                    var graphic = new Graphic({
+                        geometry: event.mapPoint,
+                        symbol: {
+                            type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+                            color: "blue",
+                            size: 12,
+                            outline: {
+                                width: 2.5,
+                                color: "darkblue"
+                            }
+                        }
+                    });
+
+                    // const returnGeo = ()=>{
+                    //     console.log(event.mapPoint.latitude)
+                    // };
+                    // returnGeo();
+
+                    let graphicLayer = new GraphicsLayer({
+                        graphics: [graphic]
+                    });
+
+                    map.add(graphicLayer);
+                    console.log(event.mapPoint.latitude)
+                    console.log(event.mapPoint.longitude)
+                    console.log(event.mapPoint.attributes)
+                });
+            });
+
+
+        // view.on("click", function (event) {
+        //     view.hitTest(event)
+        //         .then(function (hitTestResult) {
+        //             console.log(hitTestResult.attributes)
+        //         })
+
+        // });
+        view.on("click", function (event) {
+            // Search for graphics at the clicked location. View events can be used
+            // as screen locations as they expose an x,y coordinate that conforms
+            // to the ScreenPoint definition.
+            view.hitTest(event).then(function (response) {
+                if (response.results.length) {
+                    let graphics = response.results.filter(function (result) {
+                        // check if the graphic belongs to the layer of interest
+                        return result.graphics.layer === featureLayer;
+                    })[0].graphic;
+
+                    // do something with the result graphic
+                    console.log("Hello");
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div id="viewDiv"></div>
+</body>
+
+</html>

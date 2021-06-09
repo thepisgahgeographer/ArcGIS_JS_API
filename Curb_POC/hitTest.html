@@ -1,0 +1,141 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Access features with pointer events | Sample | ArcGIS API for JavaScript 4.19</title>
+
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #info {
+            background-color: black;
+            opacity: 0.75;
+            color: orange;
+            font-size: 18pt;
+            padding: 2px;
+            visibility: hidden;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.19/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.19/"></script>
+
+    <script>
+        require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"], function (Map, MapView, FeatureLayer) {
+            const fLayer = new FeatureLayer({
+                url: "https://services7.arcgis.com/33Tmvrm3G2UZLFK9/arcgis/rest/services/Hibriten/FeatureServer/0",
+                outFields: ["*"],
+                popupTemplate: ""
+            });
+
+            const map = new Map({
+                basemap: "dark-gray-vector",
+                layers: [fLayer]
+            });
+
+            const view = new MapView({
+                container: "viewDiv",
+                map: map,
+                center: [-81.4894, 35.9069],
+                zoom: 18,
+                highlightOptions: {
+                    color: "orange"
+                }
+            });
+
+            view.ui.add("info", "top-right");
+
+            view.when().then(function () {
+                return fLayer.when();
+            }).then(function (layer) {
+                const renderer = layer.renderer.clone();
+                renderer.symbol.width = 4;
+                renderer.symbol.color = [128, 128, 128, 0.8];
+                layer.renderer = renderer;
+
+                // Set up an event handler for pointer-down (mobile)
+                // and pointer-move events (mouse)
+                // and retrieve the screen x, y coordinates
+
+                return view.whenLayerView(layer);
+            })
+                .then(function (layerView) {
+                    view.on("click", eventHandler);
+
+                    function eventHandler(event) {
+                        // only include graphics from hurricanesLayer in the hitTest
+                        const opts = {
+                            include: fLayer
+                        }
+                        // the hitTest() checks to see if any graphics from the hurricanesLayer
+                        // intersect the x, y coordinates of the pointer
+                        view.hitTest(event, opts).then(getGraphics);
+                    }
+
+                    let highlight, currentYear, currentName;
+
+                    function getGraphics(response) {
+                        // the topmost graphic from the hurricanesLayer
+                        // and display select attribute values from the
+                        // graphic to the user
+                        if (response.results.length) {
+                            const graphic = response.results[0].graphic;
+
+                            const attributes = graphic.attributes;
+
+                            const name = attributes.OBJECTID;
+
+
+                            if (
+                                highlight &&
+                                (currentName !== name || currentYear !== year)
+                            ) {
+                                highlight.remove();
+                                highlight = null;
+                                return;
+                            }
+
+                            if (highlight) {
+                                return;
+                            }
+
+                            document.getElementById("info").style.visibility = "visible";
+
+                            document.getElementById("category").innerHTML =
+                                "Objectid " + name;
+
+
+
+                        } else {
+                            // remove the highlight if no features are
+                            // returned from the hitTest
+                            if (highlight) {
+                                highlight.remove();
+                                highlight = null;
+                            }
+                            document.getElementById("info").style.visibility = "hidden";
+                        }
+                    }
+                });
+        });
+    </script>
+</head>
+
+<body>
+    <div id="viewDiv"></div>
+    <div id="info">
+        <span id="name"></span> <br />
+        <span id="category"></span> <br />
+        <span id="wind"></span>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Position Along</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.19/esri/css/esri.css">
+	<link rel="stylesheet" href="//js.arcgis.com/3.13/dijit/themes/claro/claro.css" />
+    <style>
+        #info {
+            top: 20px;
+            color: #444;
+            height: auto;
+            font-family: arial;
+            right: 20px;
+            margin: 5px;
+            padding: 10px;
+            position: absolute;
+            width: 250px;
+            z-index: 40;
+            border: solid 2px #666;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        
+        html,
+        body,
+        #mapDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
+        
+        button {
+            display: block;
+        }
+    </style>
+
+    <script src="https://js.arcgis.com/3.19/"></script>
+    <script>
+        var map, tb;
+
+        require([
+            "esri/map",
+			"esri/SpatialReference",
+			"esri/geometry/Polyline",
+			"esri/geometry/Point",
+			"esri/toolbars/draw", 
+			"esri/geometry/geometryEngine", 
+			"esri/geometry/webMercatorUtils",
+            "esri/symbols/SimpleMarkerSymbol", 
+			"esri/symbols/SimpleLineSymbol",
+            "esri/symbols/PictureFillSymbol", 
+			"esri/symbols/CartographicLineSymbol",
+            "esri/graphic",
+			
+			"dojo/_base/array",
+			"dojo/parser",
+            "esri/Color", 
+			"dojo/dom", 
+			"dojo/on", 
+			"dijit/form/HorizontalSlider", 
+			"dijit/form/HorizontalRule", 
+			"dijit/form/HorizontalRuleLabels",
+			"dojo/domReady!"
+        ], function(
+            Map,
+			SpatialReference,
+			Polyline,
+			Point,
+			Draw, 
+			geometryEngine, 
+			webMercatorUtils,
+            SimpleMarkerSymbol, 
+			SimpleLineSymbol,
+            PictureFillSymbol, 
+			CartographicLineSymbol,
+            Graphic, 
+			arrayUtils,
+			parser,
+            Color, 
+			dom, 
+			on
+        ) {
+			
+			parser.parse();
+			
+			var pl;
+			var lineLength;
+
+            var SVG = "M23.963,20.834L17.5,9.64c-0.825-1.429-2.175-1.429-3,0L8.037,20.834c-0.825,1.429-0.15,2.598,1.5,2.598h12.926C24.113,23.432,24.788,22.263,23.963,20.834z";
+			var posAlong = new Graphic();
+			
+			map = new Map("mapDiv", {
+                basemap: "streets",
+                center: [-120.537, 46.592],
+                zoom: 13
+            });
+            map.on("load", initToolbar);
+
+            // lineSymbol used for freehand polyline, polyline and line. 
+            var lineSymbol = new CartographicLineSymbol(
+                CartographicLineSymbol.STYLE_SOLID,
+                new Color([255, 0, 0]), 4,
+                CartographicLineSymbol.CAP_ROUND,
+                CartographicLineSymbol.JOIN_MITER, 2
+            );
+
+            on(dom.byId("distanceAlong"), "change", calculatePositionAlong);			
+			
+
+            function initToolbar() {
+				
+            	tb = new Draw(map);
+                tb.on("draw-end", addGraphic);
+
+                // event delegation so a click handler is not
+                // needed for each individual button
+                on(dom.byId("Polyline"), "click", function(evt) {
+                    var tool = evt.target.id.toLowerCase();
+                    map.disableMapNavigation();
+                    tb.activate(tool);
+                    map.graphics.clear();
+					pl = null;
+                });
+				
+				on(dom.byId("reversePath"), "click", reversePolylineOrder);
+				
+				horizontalslider.on("change", setPercentAlong);
+
+            }
+
+            function addGraphic(evt) {
+                //deactivate the toolbar and clear existing graphics 
+                tb.deactivate();
+                map.enableMapNavigation();
+
+                lineLength = geometryEngine.geodesicLength(evt.geometry, "meters");
+                dom.byId("lineLength").innerHTML = "Line is " + lineLength.toFixed(2) + " meters long";
+
+				pl = evt.geometry;
+                map.graphics.add(new Graphic(evt.geometry, lineSymbol));
+				posAlong.setGeometry(pl.getPoint(0,0));
+				map.graphics.add(posAlong);
+            }
+			
+			function setPercentAlong(value) {
+				if (pl) {
+					dom.byId("distanceAlong").value = (lineLength * value / 100).toFixed(2);
+					calculatePositionAlong();
+				}
+			}
+			
+			function keyValueEntered(evt) {
+				if (pl) {
+					var val1 = parseFloat(evt.currentTarget.value);
+					var val = (val1 / lineLength * 100).toFixed(0);
+					horizontalslider.set("value", val);
+					calculatePositionAlong();
+				}
+			}
+			
+			function calculatePositionAlong() {
+				
+				// This function will calculate the position the polyline.  
+				var lengthTraveled = parseFloat(dom.byId("distanceAlong").value);  // how much of the polyline has been traveled
+				
+				// loop through polyline paths to find which two points will exceed the length traveled
+				var currentLength = 0;
+				var previousLength = 0;
+				var fromPT;
+				var toPT;
+				var fromPTGeo;
+				var toPTGeo;
+				var notDone = true;
+				arrayUtils.forEach(pl.paths[0], function(coords) {
+					fromPT = new Point(coords[0], coords[1], map.spatialReference);
+					fromPTGeo = webMercatorUtils.webMercatorToGeographic(fromPT);
+					if (toPT) {
+						var segPL = new Polyline(map.spatialReference);
+						segPL.addPath([fromPT, toPT]);
+						var segLength = geometryEngine.geodesicLength(segPL, "meters");
+						currentLength += segLength;
+						if (currentLength > lengthTraveled && notDone) {
+							// we have found the two points exceeding the traveled distance now find the
+							// point between them for the remaining distance.
+							var distanceToTravel = 0;
+							if (previousLength === 0)
+							{
+								distanceToTravel = lengthTraveled;
+							} else {
+								distanceToTravel = lengthTraveled - previousLength;
+							}
+							var bearing = calculateBearingTo(toPTGeo, fromPTGeo);
+							var destPT = calculateDestination(toPTGeo, distanceToTravel, bearing);
+							posAlong.setGeometry(webMercatorUtils.geographicToWebMercator(destPT));
+							var markerSym = new SimpleMarkerSymbol().setPath(SVG);
+							markerSym.setOutline(new SimpleLineSymbol().setWidth(0.5));
+							markerSym.setColor(new Color([255, 0, 0]));
+							markerSym.setAngle(bearing);
+							posAlong.setSymbol(markerSym);
+							notDone = false;
+						}
+						previousLength = currentLength;
+					}
+					toPT = fromPT;
+					toPTGeo = fromPTGeo;
+				});
+			}	
+			
+			function calculateBearingTo(pt1,pt2) {
+				var lat1 = toRadians(pt1.y);
+				var lon1 = toRadians(pt1.x);
+				var lat2 = toRadians(pt2.y);
+				var lon2 = toRadians(pt2.x);
+				var dlon = toRadians(pt2.x - pt1.x);
+				var y = Math.sin(dlon) * Math.cos(lat2);
+				var x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dlon);
+				var radians = Math.atan2(y,x);
+				var degrees = toDegrees(radians);
+				var bearing = (degrees + 360) % 360;
+				return bearing;
+			}
+			
+			function calculateDestination(pt,distance,bearing) {
+				// Distance provided is in meters convert to km
+				distance = distance / 1000;
+				// Convert distance to angular distance in radians based on the earth's radius
+				distance = distance / 6371;
+				// Convert variables to radians;
+				bearing = toRadians(bearing);
+				var lat1 = toRadians(pt.y);
+				var lon1 = toRadians(pt.x);
+				// Calculate the new points position
+				var lat2 = Math.asin( Math.sin(lat1) * Math.cos(distance) + 
+					Math.cos(lat1)*Math.sin(distance)*Math.cos(bearing) );
+				var lon2 = lon1 + Math.atan2(Math.sin(bearing)*Math.sin(distance)*Math.cos(lat1), 
+					Math.cos(distance)-Math.sin(lat1)*Math.sin(lat2));
+				lon2 = (lon2+3*Math.PI)%(2*Math.PI) - Math.PI;  // normalise to -180...+180
+				// convert back to degrees
+				lat2 = toDegrees(lat2);
+				lon2 = toDegrees(lon2);
+				// return the new destination point
+				return new Point(lon2, lat2, new SpatialReference(4326));
+			}
+			
+			function toDegrees(val) {
+				return val * 180 / Math.PI;
+			}
+			
+			function toRadians(val) {
+				return val * Math.PI / 180;
+			}
+			
+			function reversePolylineOrder() {
+				var newPL = new Polyline(map.spatialReference);
+				var newPath = [];
+				for (var i = pl.paths[0].length - 1; i >= 0; i--) {
+					newPath.push(pl.getPoint(0, i));
+				}
+				newPL.addPath(newPath);
+				pl = newPL;
+			}
+
+        });
+    </script>
+</head>
+
+<body class="claro">
+
+    <div id="info">
+        <div>Click the button to add a Polyline</div>
+        <button id="Polyline">Polyline</button>
+        <button id="reversePath">Reverse Order</button>
+        <div id="lineLength">&nbsp;</div>
+        <input type="text" id="distanceAlong">
+		<div id="horizontalSlider" data-dojo-id="horizontalslider"
+			style="width:220px;"
+			name="horizontalSlider"
+			data-dojo-type="dijit/form/HorizontalSlider"
+			data-dojo-props="value:0,
+			minimum: 0,
+			maximum:100,
+			discreteValues:100,
+			intermediateChanges:true,
+			showButtons:false">
+			<ol data-dojo-type="dijit/form/HorizontalRuleLabels" container="topDecoration"
+				style="height:1.5em;font-size:75%;color:gray;">
+				<li> </li>
+				<li>20%</li>
+				<li>40%</li>
+				<li>60%</li>
+				<li>80%</li>
+				<li> </li>
+			</ol>
+			<div data-dojo-type="dijit/form/HorizontalRule" container="bottomDecoration"
+				count="11" style="height:5px;"></div>
+			<ol data-dojo-type="dijit/form/HorizontalRuleLabels" container="bottomDecoration"
+				style="height:1em;font-size:75%;color:gray;">
+				<li>0%</li>
+				<li>50%</li>
+				<li>100%</li>
+			</ol>
+		</div>
+	</div>
+    <div id="mapDiv"></div>
+
+</body>
+
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
+  <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.2.0/mapbox-gl-draw.css"
+    type="text/css" />
+  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.2.0/mapbox-gl-draw.js"></script>
+
+  <script src="https://unpkg.com/@esri/arcgis-rest-request@3.0.0/dist/umd/request.umd.js"></script>
+  <script src="https://unpkg.com/@esri/arcgis-rest-auth@3.0.0/dist/umd/auth.umd.js"></script>
+  <script src="https://unpkg.com/@esri/arcgis-rest-feature-layer@3.0.0/dist/umd/feature-layer.umd.js"></script>
+
+  <script src="https://unpkg.com/@terraformer/arcgis@2.0.7/dist/t-arcgis.umd.js"></script>
+
+  <style>
+    html,
+    body,
+    #map {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      color: #323232;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <script>
+
+    const apiKey = ;
+
+    const basemapEnum = "ArcGIS:Topographic";
+
+    const map = new mapboxgl.Map({
+      container: "map", // the id of the div element
+      style: `https://basemaps-api.arcgis.com/arcgis/rest/services/styles/${basemapEnum}?type=style&token=${apiKey}`,
+      zoom: 12, // starting zoom
+
+      center: [-118.80543, 34.03] // starting location [longitude, latitude]
+
+    });
+
+    const draw = new MapboxDraw({
+      displayControlsDefault: false, // Don't add any tools other than those below
+      controls: {
+        point: true,
+        line_string: true,
+        polygon: true
+      }
+    });
+
+    map.addControl(draw, "top-left");
+
+    function addQueryLayers() {
+      map.addSource("query", {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: []
+        }
+      });
+      map.addLayer({
+        id: "query-line",
+        type: "line",
+        source: "query",
+        paint: {
+          "line-color": "hsl(140, 0%, 30%)",
+          "line-width": 2,
+          "line-dasharray": [2, 2]
+        }
+      });
+      map.addLayer({
+        id: "query-fill",
+        type: "fill",
+        source: "query",
+        paint: {
+          "fill-color": "hsl(140, 0%, 50%)",
+          "fill-opacity": 0.2
+        },
+        filter: ["==", ["geometry-type"], "Polygon"]
+      });
+
+      map.addLayer({
+        id: "query-circle",
+        type: "circle",
+        source: "query",
+        paint: {
+          "circle-color": "hsl(140, 0%, 30%)"
+        },
+        filter: ["==", ["geometry-type"], "Point"]
+      });
+    }
+
+    function addParcelLayers() {
+      map.addSource("parcels", {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: []
+        }
+      });
+      map.addLayer({
+        id: "parcels-fill",
+        source: "parcels",
+        type: "fill",
+
+        paint: {
+          "fill-color": "hsl(200, 80%, 50%)",
+          "fill-opacity": 0.5,
+          "fill-outline-color": "white"
+        }
+      });
+    }
+
+    map.on("load", () => {
+
+      addParcelLayers();
+
+      addQueryLayers();
+    });
+
+    map.on("draw.create", (e) => {
+      const feature = e.features[0];
+      map.getSource("query").setData(feature);
+      draw.deleteAll();
+
+      const geometry = Terraformer.geojsonToArcGIS(feature.geometry);
+      let geometryType = "esriGeometry" + feature.geometry.type;
+      if (feature.geometry.type === "LineString") {
+        geometryType = "esriGeometryPolyline";
+      }
+      executeQuery(geometry, geometryType);
+
+    });
+
+    function executeQuery(geometry, geometryType) {
+
+      arcgisRest
+        .queryFeatures({
+          url: "https://services8.arcgis.com/IJcGtArxG8IPalnE/arcgis/rest/services/streams/FeatureServer/0",
+          geometry: geometry,
+          geometryType: geometryType,
+          spatialRel: "esriSpatialRelIntersects",
+          f: "geojson",
+          returnGeometry: true,
+          outFields: ["APN", "UseType", "TaxRateCity", " Roll_LandValue"]
+        })
+
+        .then((response) => {
+          map.getSource("parcels").setData(response);
+        });
+
+    }
+
+    map.on("click", "parcels-fill", (e) => {
+      const p = e.features[0].properties;
+      const message =
+        `<b>Parcel ${p.APN}</b>` +
+        `Type: ${p.UseType} <br>` +
+        `Land value: $${p.Roll_LandValue.toLocaleString()} <br>` +
+        `Tax Rate City: ${p.TaxRateCity}`;
+
+      new mapboxgl.Popup()
+        .setHTML(message)
+        .setLngLat(e.lngLat)
+        .addTo(map);
+
+    });
+
+  </script>
+</body>
+
+</html>
